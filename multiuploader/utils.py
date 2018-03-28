@@ -26,7 +26,7 @@ def format_file_extensions(extensions):
     return ".(%s)$" % "|".join(extensions)
 
 
-def _upload_to(filename):
+def _upload_to(instance, filename):
     upload_path = getattr(settings, 'MULTIUPLOADER_FILES_FOLDER', DEFAULTS.MULTIUPLOADER_FILES_FOLDER)
 
     if upload_path[-1] != '/':
