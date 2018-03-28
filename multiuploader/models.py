@@ -37,7 +37,7 @@ class MultiuploaderFile(BaseAttachment):
     file = models.FileField(upload_to=_upload_to, max_length=255)
 
     def save(self, *args, **kwargs):
-        self.filename = os.path.basename(self.file.path)
+        self.filename = os.path.basename(self.file.name)
         return super(MultiuploaderFile, self).save(*args, **kwargs)
 
     class Meta:

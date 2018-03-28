@@ -12,7 +12,7 @@ from django.core.signing import Signer, BadSignature
 from django.core.files.uploadedfile import UploadedFile
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 
-from utils import FileResponse
+from utils import download_response
 from models import MultiuploaderFile
 from forms import MultiUploadForm, MultiuploaderMultiDeleteForm
 
@@ -146,4 +146,4 @@ def multiuploader(request, noajax=False):
 
 def multi_show_uploaded(request, pk):
     fl = get_object_or_404(MultiuploaderFile, id=pk)
-    return FileResponse(request,fl.file.path, fl.filename)
+    return download_response(request, fl.file, fl.filename)
