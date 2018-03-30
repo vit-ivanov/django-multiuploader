@@ -1,27 +1,36 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import datetime
+from south.db import db
+from south.v2 import SchemaMigration
+from django.db import models
 
-from django.db import models, migrations
-import multiuploader.utils
+
+class Migration(SchemaMigration):
+
+    def forwards(self, orm):
+        # Adding model 'MultiuploaderFile'
+        db.create_table('multiuploader_multiuploaderfile', (
+            ('id', self.gf('django.db.models.fields.CharField')(max_length=255, primary_key=True)),
+            ('filename', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('file', self.gf('django.db.models.fields.files.FileField')(max_length=255)),
+            ('upload_date', self.gf('django.db.models.fields.DateTimeField')()),
+        ))
+        db.send_create_signal('multiuploader', ['MultiuploaderFile'])
 
 
-class Migration(migrations.Migration):
+    def backwards(self, orm):
+        # Deleting model 'MultiuploaderFile'
+        db.delete_table('multiuploader_multiuploaderfile')
 
-    dependencies = [
-    ]
 
-    operations = [
-        migrations.CreateModel(
-            name='MultiuploaderFile',
-            fields=[
-                ('id', models.CharField(max_length=255, serialize=False, primary_key=True)),
-                ('filename', models.CharField(max_length=255)),
-                ('upload_date', models.DateTimeField()),
-                ('file', models.FileField(max_length=255, upload_to=multiuploader.utils._upload_to)),
-            ],
-            options={
-                'verbose_name': 'multiuploader file',
-                'verbose_name_plural': 'multiuploader files',
-            },
-        ),
-    ]
+    models = {
+        'multiuploader.multiuploaderfile': {
+            'Meta': {'object_name': 'MultiuploaderFile'},
+            'file': ('django.db.models.fields.files.FileField', [], {'max_length': '255'}),
+            'filename': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'id': ('django.db.models.fields.CharField', [], {'max_length': '255', 'primary_key': 'True'}),
+            'upload_date': ('django.db.models.fields.DateTimeField', [], {})
+        }
+    }
+
+    complete_apps = ['multiuploader']
