@@ -87,6 +87,7 @@ class MultiUploadForm(forms.Form):
 
         if self.check_content_type:
             content_type = magic.from_buffer(content.read(1024), mime=True)
+            content.seek(0)
             if content_type.lower() in self._options['allowedContentTypes']:
                 if content._size > self._options['maxFileSize']:
                     raise forms.ValidationError("maxFileSize")
