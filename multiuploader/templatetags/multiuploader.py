@@ -1,13 +1,18 @@
+# -*- coding:utf-8 -*-
 import django
 from django import template
 from django.conf import settings
 from django.core.signing import Signer
+from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
 
+from sorl.thumbnail import get_thumbnail
+
 from .. import default_settings as DEFAULTS
 from ..forms import MultiUploadForm
+from ..models import MultiuploaderFile
 
 register = template.Library()
 
@@ -75,6 +80,26 @@ def form_type(context, form_type):
 def multiuploader_form(context, form_type="default", template="multiuploader/form.html", target_form_fieldname=None,
         js_prefix="jQuery", send_button_selector=None,
         wrapper_element_id="", lock_while_uploading=True, number_files_attached=0):
+    uploaded_files_info = {}
+    if context['request'].POST.getlist(target_form_fieldname):
+        files = MultiuploaderFile.objects.filter(pk__in=context['request'].POST.getlist(target_form_fieldname))
+        for fl in files:
+            try:
+                im = get_thumbnail(fl.file, "80x80", quality=50)
+                thumb_url = im.url
+            except Exception as e:
+                thumb_url = ''
+            if not im.exists():
+                thumb_url = ''
+            uploaded_files_info[fl.id] = {
+                "id": fl.id,
+                "name": fl.filename,
+                "size": fl.file.size,
+                "url": reverse('multiuploader_file_link', args=[fl.pk]),
+                "thumbnail_url": thumb_url,
+                "delete_url": reverse('multiuploader_delete', args=[fl.pk]),
+                "delete_type": "POST",
+            }
     return render_to_string(template, {
         'multiuploader_form': MultiUploadForm(form_type=form_type),
         'csrf_token': context["csrf_token"],
@@ -84,7 +109,8 @@ def multiuploader_form(context, form_type="default", template="multiuploader/for
         'wrapper_element_id': wrapper_element_id,
         'target_form_fieldname': target_form_fieldname,
         'lock_while_uploading': lock_while_uploading,
-        'number_files_attached': number_files_attached
+        'number_files_attached': number_files_attached,
+        'uploaded_files_info': uploaded_files_info,
     })
 
 
