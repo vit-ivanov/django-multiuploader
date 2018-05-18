@@ -117,9 +117,9 @@ def multiuploader(request, noajax=False):
             thumb_url = im.url
         except Exception as e:
             log.error(e)
-
-        if not im.exists():
-            thumb_url = ''
+        else:
+            if not im.exists():
+                thumb_url = ''
 
         #generating json response array
         result = [{"id": fl.id,
