@@ -85,7 +85,7 @@ def multiuploader_form(context, form_type="default", template="multiuploader/for
     if target_form_field:
         target_form_fieldname = target_form_field.html_name
         if target_form_field.value():
-            pks_list = [f.name for f in target_form_field.value()]
+            pks_list = [f for f in target_form_field.value()]
     if pks_list:
         files = MultiuploaderFile.objects.filter(pk__in=pks_list)
         for fl in files:
