@@ -78,11 +78,16 @@ def form_type(context, form_type):
 
 @register.simple_tag(takes_context=True)
 def multiuploader_form(context, form_type="default", template="multiuploader/form.html", target_form_fieldname=None,
-        js_prefix="jQuery", send_button_selector=None,
-        wrapper_element_id="", lock_while_uploading=True, number_files_attached=0):
+                       target_form_field=None, js_prefix="jQuery", send_button_selector=None,
+                       wrapper_element_id="", lock_while_uploading=True, number_files_attached=0):
     uploaded_files_info = {}
-    if context['request'].POST.getlist(target_form_fieldname):
-        files = MultiuploaderFile.objects.filter(pk__in=context['request'].POST.getlist(target_form_fieldname))
+    pks_list = context['request'].POST.getlist(target_form_fieldname)
+    if target_form_field:
+        target_form_fieldname = target_form_field.html_name
+        if target_form_field.value():
+            pks_list = [f for f in target_form_field.value()]
+    if pks_list:
+        files = MultiuploaderFile.objects.filter(pk__in=pks_list)
         for fl in files:
             try:
                 im = get_thumbnail(fl.file, "80x80", quality=50)
