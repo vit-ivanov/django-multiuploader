@@ -50,13 +50,13 @@ def get_uploads_from_request(request):
         #getting file data for further manipulations
         if not u'files' in request.FILES:
             return []
-        
+
         for fl in request.FILES.getlist("files"):
             wrapped_file = UploadedFile(fl)
             filename = wrapped_file.name
             file_size = wrapped_file.file.size
             attachments.append({"file": fl, "date": now(), "name": wrapped_file.name})
-        
+
     return attachments
 
 def get_uploads_from_temp(ids):
@@ -70,7 +70,7 @@ def get_uploads_from_temp(ids):
     #Getting THE FILES
 
     for fl in files:
-        ats.append({"file":File(fl.file), "date":fl.upload_date, "name":fl.filename})
+        ats.append({"file":File(fl.file), "date":fl.upload_date, "name":fl.filename, 'id': fl.pk})
         
     return ats
 
